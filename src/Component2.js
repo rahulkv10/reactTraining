@@ -5,7 +5,7 @@ export function Component2() {
 
   const generateRandomText = () => {
     const length = Math.floor(Math.random() * (64 - 8 + 1)) + 8;
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$$%^&*()_";
     let result = "";
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -22,11 +22,11 @@ export function Component2() {
   return (
     <div className="component2-container">
       <h1 className="title">{getHeading()}</h1>
-      <ul className="random-text-list">
+      <p className="random-text-list">
         {randomTextList.map((text, index) => (
           <li className="random-text-item" key={index}>{text}</li>
         ))}
-      </ul>
+      </p>
     </div>
   );
 }
