@@ -4,18 +4,21 @@ import "./Component1.css";
 export class Component1 extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      title: "To Do Items",
-      todoItems: [
-        { text: "Drink Water" },
-        { text: "Read Newspaper" },
-        { text: "Do the Exercise" },
-        { text: "Breakfast" },
-        { text: "Read a Book" },
-      ],
+      newTodo: "",
     };
   }
+
+  handleInputChange = (value) => {
+    this.setState({ newTodo: value.target.value });
+  };
+
+  handleAdd = () => {
+    if (this.state.newTodo.trim()) {
+      this.props.onAddTodo(this.state.newTodo);
+      this.setState({ newTodo: "" });
+    }
+  };
 
   componentDidMount() {
     console.log("Component has mounted.");
@@ -45,9 +48,35 @@ export class Component1 extends Component {
 
   render() {
     return (
-      <div className="component-container">
-        <h1 className="title">{this.renderTitle()}</h1>
-        <div className="dataSet">{this.renderTodoItems()}</div>
+      <div className="component1-container">
+        <h1 className="title">TODO List</h1>
+        <ul className="todo-list">
+          {this.props.todoItems.map((item, index) => (
+            <li key={index} className="todo-item">
+              <span>{item.text}</span>
+              <button onClick={() => this.props.onDeleteTodo(index)}>Delete</button>
+              <button
+                onClick={() =>
+                  this.props.onEditTodo(
+                    index,
+                    prompt("Edit TODO:", item.text) || item.text
+                  )
+                }
+              >
+                Edit
+              </button>
+            </li>
+          ))}
+        </ul>
+        <div className="add-todo">
+          <input
+            type="text"
+            value={this.state.newTodo}
+            onChange={this.handleInputChange}
+            placeholder="Add a new TODO"
+          />
+          <button onClick={this.handleAdd}>Add</button>
+        </div>
       </div>
     );
   }

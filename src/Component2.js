@@ -56,14 +56,15 @@ export class Component2 extends Component {
   render() {
     return (
       <div className="component2-container">
-        <h1 className="title">{this.state.title}</h1>
-        <p className="random-text-list">
-          {this.state.randomTextList.length > 0 ? (
-            this.renderRandomTextList()
-          ) : (
-            <span>Loading items...</span>
-          )}
-        </p>
+        <h1 className="title">Random Texts</h1>
+        <button onClick={this.props.onGenerateRandomText}>Generate Random Texts</button>
+        <ul className="random-text-list">
+          {this.props.randomTextList.map((text, index) => (
+            <li key={index} className="random-text-item">
+              {text}
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
