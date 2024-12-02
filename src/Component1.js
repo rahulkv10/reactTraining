@@ -12,7 +12,7 @@ export class Component1 extends Component {
   handleInputChange = (value) => {
     this.setState({ newTodo: value.target.value });
   };
-
+sjsj//
   handleAdd = () => {
     if (this.state.newTodo.trim()) {
       this.props.onAddTodo(this.state.newTodo);
