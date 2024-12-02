@@ -1,113 +1,80 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import { Component1 } from "./Component1";
 import { Component2 } from "./Component2";
 
-export class ParentComponent extends Component {
-  constructor(props) {
-    super(props);
+export const ParentComponent = () => {
+  const [todoItems, setTodoItems] = useState([]);
+  const [randomTextList, setRandomTextList] = useState([]);
+  const [useLocalStorage, setUseLocalStorage] = useState(true);
 
-    this.state = {
-      todoItems: [], 
-      randomTextList: [], 
-      useLocalStorage: true, 
-    };
-  }
 
-  componentDidMount() {
-    const storedTodos = this.getTodosFromStorage();
-    if (storedTodos) {
-      this.setState({ todoItems: storedTodos });
+  useEffect(() => {
+    const storage = useLocalStorage ? localStorage : sessionStorage;
+    const savedTodos = storage.getItem("todoItems");
+    if (savedTodos) {
+      setTodoItems(JSON.parse(savedTodos));
     }
-  }
+  }, []); 
 
-  getTodosFromStorage = () => {
-    const storage = this.state.useLocalStorage ? localStorage : sessionStorage;
-    const storedData = storage.getItem("todos");
-    return storedData ? JSON.parse(storedData) : [];
+  useEffect(() => {
+    const storage = useLocalStorage ? localStorage : sessionStorage;
+    storage.setItem("todoItems", JSON.stringify(todoItems));
+  }, [todoItems, useLocalStorage]); 
+
+  const handleStorageToggle = () => {
+    setUseLocalStorage((prev) => !prev);
   };
 
-  saveTodosToStorage = (todos) => {
-    const storage = this.state.useLocalStorage ? localStorage : sessionStorage;
-    storage.setItem("todos", JSON.stringify(todos));
+  const handleAddTodo = (newTodo) => {
+    setTodoItems([...todoItems, newTodo]);
   };
 
-  handleAddTodo = (newTodo) => {
-    const updatedTodos = [...this.state.todoItems, { text: newTodo }];
-    this.setState({ todoItems: updatedTodos }, () => {
-      this.saveTodosToStorage(updatedTodos);
-    });
+  const handleEditTodo = (index, updatedTodo) => {
+    const updatedTodos = [...todoItems];
+    updatedTodos[index] = updatedTodo;
+    setTodoItems(updatedTodos);
   };
 
-  handleDeleteTodo = (index) => {
-    const updatedTodos = this.state.todoItems.filter((_, i) => i !== index);
-    this.setState({ todoItems: updatedTodos }, () => {
-      this.saveTodosToStorage(updatedTodos);
-    });
+  const handleDeleteTodo = (index) => {
+    setTodoItems(todoItems.filter((_, i) => i !== index));
   };
 
-  handleEditTodo = (index, updatedText) => {
-    const updatedTodos = this.state.todoItems.map((item, i) =>
-      i === index ? { text: updatedText } : item
-    );
-    this.setState({ todoItems: updatedTodos }, () => {
-      this.saveTodosToStorage(updatedTodos);
-    });
-  };
-
-  handleGenerateRandomText = () => {
-    const randomTextList = Array.from({ length: 5 }, () =>
-      this.generateRandomText()
-    );
-    this.setState({ randomTextList });
-  };
-
-  generateRandomText = () => {
-    const length = Math.floor(Math.random() * (64 - 8 + 1)) + 8;
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$$%^&*()_";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return result;
-  };
-
-  handleStorageToggle = () => {
-    this.setState(
-      (prevState) => ({ useLocalStorage: !prevState.useLocalStorage }),
-      () => {
-        this.saveTodosToStorage(this.state.todoItems);
+  const handleGenerateRandomText = () => {
+    const generateRandomText = () => {
+      const length = Math.floor(Math.random() * (64 - 8 + 1)) + 8;
+      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$$%^&*()_";
+      let result = "";
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
       }
-    );
+      return result;
+    };
+
+    setRandomTextList(Array.from({ length: 5 }, () => generateRandomText()));
   };
 
-  render() {
-    return (
-      <div className="parent-container">
-        <div className="storage-toggle">
-          <label>
-            <input
-              type="checkbox"
-              checked={this.state.useLocalStorage}
-              onChange={this.handleStorageToggle}
-            />
-            Persist Data in LocalStorage
-          </label>
-        </div>
-
-        <Component1
-          todoItems={this.state.todoItems}
-          onAddTodo={this.handleAddTodo}
-          onDeleteTodo={this.handleDeleteTodo}
-          onEditTodo={this.handleEditTodo}
-        />
-
-
-        <Component2
-          randomTextList={this.state.randomTextList}
-          onGenerateRandomText={this.handleGenerateRandomText}
-        />
+  return (
+    <div className="parent-container">
+      <div className="storage-toggle">
+        <label>
+          <input
+            type="checkbox"
+            checked={useLocalStorage}
+            onChange={handleStorageToggle}
+          />
+          Persist Data in LocalStorage
+        </label>
       </div>
-    );
-  }
-}
+      <Component1
+        todoItems={todoItems}
+        onAddTodo={handleAddTodo}
+        onDeleteTodo={handleDeleteTodo}
+        onEditTodo={handleEditTodo}
+      />
+      <Component2
+        randomTextList={randomTextList}
+        onGenerateRandomText={handleGenerateRandomText}
+      />
+    </div>
+  );
+};
