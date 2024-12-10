@@ -7,19 +7,18 @@ export const ParentComponent = () => {
   const [randomTextList, setRandomTextList] = useState([]);
   const [useLocalStorage, setUseLocalStorage] = useState(true);
 
-
   useEffect(() => {
     const storage = useLocalStorage ? localStorage : sessionStorage;
     const savedTodos = storage.getItem("todoItems");
     if (savedTodos) {
       setTodoItems(JSON.parse(savedTodos));
     }
-  }, []); 
+  }, []);
 
   useEffect(() => {
     const storage = useLocalStorage ? localStorage : sessionStorage;
     storage.setItem("todoItems", JSON.stringify(todoItems));
-  }, [todoItems, useLocalStorage]); 
+  }, [todoItems, useLocalStorage]);
 
   const handleStorageToggle = () => {
     setUseLocalStorage((prev) => !prev);
@@ -42,7 +41,8 @@ export const ParentComponent = () => {
   const handleGenerateRandomText = () => {
     const generateRandomText = () => {
       const length = Math.floor(Math.random() * (64 - 8 + 1)) + 8;
-      const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$$%^&*()_";
+      const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$$%^&*()_";
       let result = "";
       for (let i = 0; i < length; i++) {
         result += characters.charAt(Math.floor(Math.random() * characters.length));
