@@ -5,7 +5,7 @@ const AddTodo = ({ todos, setTodos }) => {
 
   const handleAdd = () => {
     if (task.trim() === "") {
-      alert("No Task");
+      alert("Task cannot be empty");
       return;
     }
     const newTodo = { id: Date.now(), task, completed: false };
